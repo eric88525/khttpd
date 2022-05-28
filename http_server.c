@@ -101,6 +101,11 @@ static int http_parser_callback_request_url(http_parser *parser,
                                             size_t len)
 {
     struct http_request *request = parser->data;
+    size_t old_len = strlen(request->request_url);
+    if ((old_len + len) > 127) {
+        pr_err("url error: url truncated!\n");
+        len = 127 - old_len;
+    }
     strncat(request->request_url, p, len);
     return 0;
 }
